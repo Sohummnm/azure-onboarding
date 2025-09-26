@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ required "Customer name is required" .Values.customerName }}-rb
+  namespace: {{ required "Customer name is required" .Values.customerName }}-ns
+subjects:
+  - kind: Group
+    name: {{ required "EntraIDGroup is required" .Values.entraIDGroup }}
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: {{ required "Customer name is required" .Values.customerName }}-role
+  apiGroup: rbac.authorization.k8s.io

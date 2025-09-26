@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: LimitRange
+metadata: 
+  name: {{ required "Customer name is required" .Values.customerName }}-limits
+  namespace: {{ required "Customer name is required" .Values.customerName }}-ns
+spec: 
+  limits:
+    - default:
+        cpu: {{ required "limitrange.default.cpu is required" .Values.limitRange.default.cpu }}
+        memory: {{ required "limitrange.default.memory is required" .Values.limitRange.default.memory }}
+      defaultRequest:
+        cpu: {{ required "limitRange.defaultRequest.cpu is required " .Values.limitRange.defaultRequest.cpu }}
+        memory: {{ required "limitRange.defaultRequest.memory is required " .Values.limitRange.defaultRequest.memory }}
+      type: Container
