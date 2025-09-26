@@ -1,2 +1,3 @@
 # azure-onboarding
 This repo onboards customers to the aks by provisioning their azure infra resources as well as kubernetes resources and give them their namespace level access.
+This uses uses terraform for infra provisioning like User Assigned Managed Identity, Federated Credential; uses helm charts to create namespace, service account, resource quotas, limit ranges, role and rolebindings. For CICD Pipeline we will use azure Devops. 
