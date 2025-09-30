@@ -1,4 +1,0 @@
-apiVersion: 
-kind: Namespace
-metadata:
-  name: {{ required "Customer name is required" .Values.customerName }}-ns
