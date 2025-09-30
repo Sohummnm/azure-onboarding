@@ -23,9 +23,7 @@ HELM
 
 1. Its a modular helm chart which can be used for multiple customer onboarding.
 2. It takes all values from the customer specific values.yaml which is passed in the pipeline.
-3. It creates multiple kubernetes resources which a multi tenant kubernetes cluster should have for its customers, which includes:- Limit Ranges, Resource Quotas, Service account, Role, RoleBinding, Network Policy.
-4. We dont create customer namespace through helm chart, becuase helm requires namespace to exist before installing chart; we do this through
-azure devops pipeline using --create-namespace flag using arguments attribute in  "K8s resources" stage.
+3. It creates multiple kubernetes resources which a multi tenant kubernetes cluster should have for its customers, which includes:- Namespace, Limit Ranges, Resource Quotas, Service account, Role, RoleBinding, Network Policy.
 
 ------------------------------------------------------------------------------------------------------
 Terraform
@@ -35,11 +33,3 @@ Terraform
 3. It creates User Assigned Managed Identity, Federated Credential [OIDC] for the customer.
 4. It provides UAMI Client ID, Namespace, Kubernetes Service Account name as an output for Customer's reference. 
 5. It injects all the variables from the Azure Devops Pipeline. 
-
-------------------------------------------------------------------------------------------------------------
-Azure Devops Pipeline
-
-1. It takes input paramaters which is injected as our terraform variables.
-2. It first provisions the azure infra like uami, federated creds for the customer and its workloads. 
-3. It then creates kubernetes resources using Helm Chart we have. 
-4. Helm requires namespace to apply the chart. So we create customer namespace in the pipeline using --create-namespace flag using arguments attribute in  "K8s resources" stage.
