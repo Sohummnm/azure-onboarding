@@ -1,0 +1,75 @@
+# CICD piepline for onbaording customer to Azure aks
+
+trigger:
+  branches:
+    include:
+      - main
+parameters:
+  - name: team_name
+    type: string
+  - name: location
+    type: string
+  - name: resource_group_name
+    type: string
+
+variables:
+  terraformWorkingDirectory: ./terraform
+  helmChartPath: ./helm
+  helmValuesPath: ./helm/values/$(team_name).yaml
+
+stages:
+  - stage: Provision_Infra
+    displayName: "Provisioning Infrastructure for customer"
+    jobs:
+      - job: TerraformApply
+        displayName: "Terraform Apply"
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: '1.5.6'
+          - task: terraformCLI@0
+            displayName: 'Terraform Init'
+            inputs:
+              command: 'init'
+              workingDirectory: '$(terraformWorkingDirectory)'
+          - task: terraformCLI@0
+            displayName: 'Terraform Apply'
+            inputs:
+              command: 'apply'
+              workingDirectory: '$(terraformWorkingDirectory)'
+              environmentServiceName: 'AzureServiceConnection' # Replace with your Azure service connection name
+              commandOptions: >
+                -auto-approve
+                -var="team_name=$(team_name)"
+                -var="location=$(location)"
+                -var="resource_group_name=$(resource_group_name)"
+          - task: TerraformCLI@0
+            displayName: 'Terraform Output'
+            inputs:
+              command: 'output'
+              workingDirectory: '$(terraformWorkingDirectory)'
+              environmentServiceName: 'AzureServiceConnection' # Replace with your Azure service connection name
+              outputMode: 'json'
+            name: TerraformOutput
+  - stage: K8s resources
+    displayName: "Creating K8s resources for customer"
+    dependsOn: Provision_Infra
+    jobs:
+      - job: HelmDeploy
+        displayName: "Deploy Helm Chart"
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: helmInstaller@1
+            inputs:
+              helmVersionToInstall: 'latest'
+          - task: HelmDeploy@0
+            inputs:
+              connectiontype: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'K8sServiceConnection' # Replace with your Kubernetes
+              chartpath: '$(helmChartPath)'
+              releaseName: '$(team_name)-release'
+              valuesFile: '$(helmValuesPath)'
+              arguments: "--namespace ${team_name}-ns --create-namespace"

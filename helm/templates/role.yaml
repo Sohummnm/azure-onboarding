@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: 
+  name: {{ required "Customer Name is required" .Values.customerName }}-role
+  namespace: {{ required "Customer Name is required" .Values.customerName }}-ns
+rules:
+  - apiGroups: [*]
+    resources: [*]
+    verbs: [*]

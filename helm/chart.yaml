@@ -1,0 +1,4 @@
+apiVersion: v2
+name: Team-Onboarding
+description: Helm chart for kubernetes Onboarding
+version: 0.1.0

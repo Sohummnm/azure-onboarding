@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ required "Customer name is required" .Values.customerName }}-rq
+  namespace: {{ required "Customer name is required" .Values.customerName }}-ns
+spec: 
+  hard: 
+    cpu: {{ required "resourceQuota.cpu is required" .Values.resourceQuota.cpu }}
+    memory: {{ required "resourceQuota.memory is required" .Values.resourceQuota.memory }}
